@@ -2,8 +2,20 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class PlayerControls : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
+    #region Singleton Declaration
+
+    public static PlayerController playerController;
+
+    #endregion
+
+    #region External References
+
+    public Camera camera;
+
+    #endregion
+
     public float horizontalMouseSensitivity = 10.0f;
 
     private float rotY = 0.0f; // rotation around the up/y axis
@@ -31,8 +43,6 @@ public class PlayerControls : MonoBehaviour
 
     BWEffect bWEffect;
 
-    BlueCube blueCube;
-
     LeftElevatorDoor leftDoor;
 
     public GameObject target;
@@ -43,13 +53,13 @@ public class PlayerControls : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        playerController = this;
+
         Cursor.visible = false;
 
         camRot = GetComponentInChildren<CameraRotate>();
 
         leftDoor = GameObject.FindGameObjectWithTag("Leftdoor").GetComponent<LeftElevatorDoor>();
-
-        blueCube = GameObject.FindGameObjectWithTag("Bluecube").GetComponent<BlueCube>();
 
         bWEffect = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<BWEffect>();
 
@@ -75,7 +85,8 @@ public class PlayerControls : MonoBehaviour
         CameraRotation();
 
         //raycast for objects
-        interactRaycast();          
+        if (Input.GetKey("e"))
+            CheckForInteraction();          
     }
 
     //looking left and right
@@ -139,7 +150,6 @@ public class PlayerControls : MonoBehaviour
         //jump
         if (Input.GetKeyDown("space") && CheckGrounded())
         {
-            Debug.Log("jumping");
             myTransform.GetComponent<Rigidbody>().AddForce((myTransform.up * jumpForce));            
             hasJumped = true;
         }        
@@ -157,36 +167,15 @@ public class PlayerControls : MonoBehaviour
         }
     }
 
-    public void interactRaycast()
+    public void CheckForInteraction()
     {
         RaycastHit hit;
 
         if (Physics.Raycast(transform.position, transform.forward, out hit, 2f))
         {
-            Debug.DrawLine(transform.position, hit.point, Color.green);
-            //hit object
-            if (hit.transform.tag == "Bluecube")
+            if (hit.transform.tag == "Interactable")
             {
-                blueCube.text.enabled = true;
-
-                if (Input.GetKeyDown("e"))
-                {
-                    bWEffect.enabled = false;
-                    blueCube.text.enabled = false;
-                    blueCube.dialogueText.enabled = true;
-                    blueCube.blueCubeNarration.enabled = true;
-                }
-                Debug.DrawLine(transform.position, hit.point, Color.green);
-            }
-
-            if (hit.transform.tag == "Redcube")
-            {
-                Debug.DrawLine(transform.position, hit.point, Color.green);
-            }
-
-            if (hit.transform.tag == "Greencube")
-            {
-                Debug.DrawLine(transform.position, hit.point, Color.green);
+                hit.transform.gameObject.GetComponent<Interactable>().OnUsed();
             }
         }
     }
@@ -201,7 +190,8 @@ public class PlayerControls : MonoBehaviour
         }
         else return false;
     }    
-   
+
+   /*
     //DOES NOT WORK PLS FIX FOR THE SCRUBS THE THAT NEED IT?    
     bool invertingMouse()
     {
@@ -217,7 +207,7 @@ public class PlayerControls : MonoBehaviour
             return (true);
         }
     }
-    
+    */
 }
 
 

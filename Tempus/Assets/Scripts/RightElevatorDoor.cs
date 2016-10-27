@@ -5,14 +5,14 @@ public class RightElevatorDoor : MonoBehaviour {
 
     Transform myTransform;
 
-    PlayerControls playerControls;
+    PlayerController playerControls;
 
     // Use this for initialization
     void Start ()
     {
         myTransform = this.transform;
 
-        playerControls = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControls>();
+        playerControls = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
     }
 
     // Update is called once per frame

@@ -5,12 +5,12 @@ using UnityEngine.UI;
 public class PlayerUI : MonoBehaviour {
 
     public GameObject player;
-    PlayerControls playerControls;
+    PlayerController playerControls;
 
 	// Use this for initialization
 	void Start ()
     {
-        playerControls = player.GetComponent<PlayerControls>();
+        playerControls = player.GetComponent<PlayerController>();
 	}
 	
 	// Update is called once per frame

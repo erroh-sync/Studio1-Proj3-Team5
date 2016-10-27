@@ -7,7 +7,7 @@ public class LeftElevatorDoor : MonoBehaviour {
 
     BWEffect bWEffect;
 
-    PlayerControls playerControls;
+    PlayerController playerControls;
 
     public bool canRunGrey = true;
 
@@ -20,7 +20,7 @@ public class LeftElevatorDoor : MonoBehaviour {
 
         myTransform = this.transform;
 
-        playerControls = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControls>();        
+        playerControls = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();        
     }
 
     // Update is called once per frame
