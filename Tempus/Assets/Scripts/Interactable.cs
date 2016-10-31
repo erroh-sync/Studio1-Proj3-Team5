@@ -14,6 +14,12 @@ public class Interactable : MonoBehaviour {
     private float InteractDistance = 5.0f; // How far away can we interact with this object
     [SerializeField]
     private Vector2 LabelDimensions = new Vector2(128.0f, 64.0f); // The dimensions of the popup Label
+    [SerializeField]
+    private float EventDuration = 10.0f; // How long the event will be activate for
+    [SerializeField]
+    private ReactiveObject[] reactiveObjects; // An array of objects that are activated upon 
+    [SerializeField]
+    private GUIStyle guiStyle;
 
     #endregion
 
@@ -21,6 +27,7 @@ public class Interactable : MonoBehaviour {
 
     private Vector2 ScreenLocation; // The location of this object on screen
     bool bInRange = false; // Are we in interaction range
+    private float EventTimer = 0.0f; // A timer for deactivating the reactive objects
 
     #endregion
 
@@ -35,9 +42,9 @@ public class Interactable : MonoBehaviour {
     {
         NarrationSource = this.gameObject.GetComponent<AudioSource>(); // Retrieve the narration source
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update()
     {
         #region Distance Checking
 
@@ -51,6 +58,13 @@ public class Interactable : MonoBehaviour {
 
         // Retrieve the screen location
         ScreenLocation = PlayerController.playerController.camera.WorldToScreenPoint(this.transform.position);
+
+        if (EventTimer > 0.0f)
+        {
+            EventTimer -= Time.deltaTime;
+            if (EventTimer < 0.0f)
+                EndEvent();
+        }
     }
 
     // OnGui is called once per frame
@@ -58,14 +72,22 @@ public class Interactable : MonoBehaviour {
     {
         if (bInRange)
         {
-            //GUI.Label(new Rect(ScreenLocation.x, ScreenLocation.y, LabelDimensions.x, LabelDimensions.y), NameString);
-            GUI.Label(new Rect(ScreenLocation.x - (LabelDimensions.x/2.0f), Screen.height - (ScreenLocation.y - (LabelDimensions.y / 2.0f)), LabelDimensions.x, LabelDimensions.y), NameString);
+            GUI.Label(new Rect(ScreenLocation.x, Screen.height - ScreenLocation.y, LabelDimensions.x, LabelDimensions.y), NameString, guiStyle);
         }
     }
 
     // OnUsed is called when the player interacts with us
     public void OnUsed()
     {
+        EventTimer = EventDuration; // Start the timer
+        NarrationSource.Play(); // Play the narration
+        foreach (ReactiveObject obj in reactiveObjects)
+            obj.Activate();
+    }
 
+    private void EndEvent()
+    {
+        foreach (ReactiveObject obj in reactiveObjects)
+            obj.Deactivate();
     }
 }

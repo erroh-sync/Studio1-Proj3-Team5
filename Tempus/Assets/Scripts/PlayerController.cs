@@ -10,45 +10,33 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
+    #region Serialized Variables
+
+    [SerializeField]
+    private float movementSpeed = 4.5f;
+    [SerializeField]
+    private float horizontalMouseSensitivity = 10.0f;
+    [SerializeField]
+    private float jumpForce = 200.0f;
+    [SerializeField]
+    private float useDistance = 5.0f;
+
+    #endregion
+
+    #region Private Variables
+
+    private float rotY = 0.0f; // The rotation around the Y/Horizontal axis
+    private float rotX = 0.0f; // The rotation around the X/Horizontal axis 
+    private bool hasJumped = true; // Stores whether or not we have jumped
+    private bool mouseLocked = true; // Is the mouse currently locked to the screen?
+
+    #endregion
+
     #region External References
 
     public Camera camera;
 
     #endregion
-
-    public float horizontalMouseSensitivity = 10.0f;
-
-    private float rotY = 0.0f; // rotation around the up/y axis
-    private float rotX = 0.0f; // rotation around the right/x axis    
-
-    public GameObject[] muzzles;
-    int currentMuzzleIndex = 0;
-    
-    GameManager gameManager;
-    private Transform myTransform;
-    private Vector3 playerPosition;
-    public float walkSpeed = 3.0f;
-    public float originalWalkSpeed = 3.0f;
-    public float runSpeed = 5.0f;
-
-    public float distanceToGround;
-    public float jumpForce = 200.0f;
-    
-    public float liftTime = 2.0f;
-    public bool hasJumped = false;    
-    
-    bool paused = false;
-    
-    CameraRotate camRot;
-
-    BWEffect bWEffect;
-
-    LeftElevatorDoor leftDoor;
-
-    public GameObject target;
-
-    int xpos = (Screen.width) / 2;
-    int ypos = (Screen.height) / 2;
 
     // Use this for initialization
     void Start()
@@ -56,14 +44,6 @@ public class PlayerController : MonoBehaviour
         playerController = this;
 
         Cursor.visible = false;
-
-        camRot = GetComponentInChildren<CameraRotate>();
-
-        leftDoor = GameObject.FindGameObjectWithTag("Leftdoor").GetComponent<LeftElevatorDoor>();
-
-        bWEffect = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<BWEffect>();
-
-        myTransform = this.transform;
 
         Vector3 rot = transform.localRotation.eulerAngles;
         rotY = rot.y;
@@ -75,18 +55,16 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if the elevator doors are open then movement is activated
-        if (leftDoor.activateMovement == true)
-        {
-            Movement();
-        }
-
         //calls camera looking
         CameraRotation();
 
         //raycast for objects
         if (Input.GetKey("e"))
-            CheckForInteraction();          
+            CheckForInteraction();
+
+        Movement();
+
+        MouseLock();
     }
 
     //looking left and right
@@ -101,17 +79,17 @@ public class PlayerController : MonoBehaviour
         transform.rotation = localRotation;        
     }
 
-    void Movement()
+    private void Movement()
     {
         //move Left
         if (Input.GetKey("a"))
         {
             if (CheckGrounded())
             {
-                transform.position -= transform.right * walkSpeed * Time.deltaTime;
+                transform.position -= transform.right * movementSpeed * Time.deltaTime;
             }
 
-            else transform.position -= transform.right * walkSpeed * Time.deltaTime;            
+            else transform.position -= transform.right * movementSpeed * Time.deltaTime;            
         }
 
         //move right
@@ -119,10 +97,10 @@ public class PlayerController : MonoBehaviour
         {
             if (CheckGrounded())
             {
-               transform.position += transform.right * walkSpeed * Time.deltaTime;
+               transform.position += transform.right * movementSpeed * Time.deltaTime;
             }
 
-            else transform.position += transform.right * walkSpeed * Time.deltaTime;            
+            else transform.position += transform.right * movementSpeed * Time.deltaTime;            
         }
 
         //move backwards
@@ -130,10 +108,10 @@ public class PlayerController : MonoBehaviour
         {
             if (CheckGrounded())
             {
-                transform.position -= transform.forward * walkSpeed * Time.deltaTime;
+                transform.position -= transform.forward * movementSpeed * Time.deltaTime;
             }
 
-            else transform.position -= transform.forward * walkSpeed * Time.deltaTime;
+            else transform.position -= transform.forward * movementSpeed * Time.deltaTime;
         }
 
         //move forward
@@ -141,37 +119,26 @@ public class PlayerController : MonoBehaviour
         {
             if (CheckGrounded())
             {
-                transform.position += transform.forward * walkSpeed * Time.deltaTime;
+                transform.position += transform.forward * movementSpeed * Time.deltaTime;
             }
             
-            else transform.position += transform.forward * walkSpeed * Time.deltaTime;
+            else transform.position += transform.forward * movementSpeed * Time.deltaTime;
         }
         
         //jump
         if (Input.GetKeyDown("space") && CheckGrounded())
         {
-            myTransform.GetComponent<Rigidbody>().AddForce((myTransform.up * jumpForce));            
+            this.GetComponent<Rigidbody>().AddForce((this.transform.up * jumpForce));            
             hasJumped = true;
-        }        
-
-        //start sprinting
-        if (Input.GetKey("left shift") && CheckGrounded())
-        {
-            walkSpeed = runSpeed;
-        }
-
-        //stop sprinting
-        if (Input.GetKeyUp("left shift") && CheckGrounded())
-        {
-            walkSpeed = originalWalkSpeed;
-        }
+        }    
     }
 
-    public void CheckForInteraction()
+    // Performs a check to see if we can interact with the object we're looking at
+    private void CheckForInteraction()
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, transform.forward, out hit, 2f))
+        if (Physics.Raycast(transform.position, transform.forward, out hit, useDistance))
         {
             if (hit.transform.tag == "Interactable")
             {
@@ -180,10 +147,10 @@ public class PlayerController : MonoBehaviour
         }
     }
      
-    //Checking if grounded for jumping
-    public bool CheckGrounded()
+    // Checking if grounded for jumping
+    private bool CheckGrounded()
     {
-        if(Physics.Raycast(myTransform.position, -Vector3.up, 2f))
+        if(Physics.Raycast(this.transform.position, -Vector3.up, 2f))
         {
             hasJumped = false;
             return true;
@@ -191,23 +158,23 @@ public class PlayerController : MonoBehaviour
         else return false;
     }    
 
-   /*
-    //DOES NOT WORK PLS FIX FOR THE SCRUBS THE THAT NEED IT?    
-    bool invertingMouse()
+    // Performs mouse locking, used mosetly for in editor testing
+    private void MouseLock()
     {
-        if(camRot.verticalMouseSensitivity > 0)
+        if (mouseLocked) // If the mouse is currently locked
         {
-            camRot.verticalMouseSensitivity -= camRot.verticalMouseSensitivity - camRot.verticalMouseSensitivity;
-            return (false);
+            Cursor.lockState = CursorLockMode.Locked; // Lock it to the screen
         }
-
         else
         {
-            camRot.verticalMouseSensitivity += camRot.verticalMouseSensitivity + camRot.verticalMouseSensitivity;
-            return (true);
+            Cursor.lockState = CursorLockMode.None; // Unlock the mouse and unhide the cursor
+            Cursor.visible = true;
+        }
+        if (Input.GetKeyDown(KeyCode.Backspace)) // Toggle locking if we press backspace
+        {
+            mouseLocked = !mouseLocked;
         }
     }
-    */
 }
 
 

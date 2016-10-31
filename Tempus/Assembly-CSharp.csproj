@@ -47,12 +47,12 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\BWEffect.cs" />
      <Compile Include="Assets\Scripts\CameraRotate.cs" />
+     <Compile Include="Assets\Scripts\ElevatorController.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Interactable.cs" />
      <Compile Include="Assets\Scripts\LeftElevatorDoor.cs" />
-     <Compile Include="Assets\Scripts\MouseLock.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
-     <Compile Include="Assets\Scripts\PlayerUI.cs" />
+     <Compile Include="Assets\Scripts\ReactiveObject.cs" />
      <Compile Include="Assets\Scripts\RightElevatorDoor.cs" />
      <None Include="Assets\Shaders\BWDiffuse.shader" />
  <Reference Include="UnityEngine.UI">
