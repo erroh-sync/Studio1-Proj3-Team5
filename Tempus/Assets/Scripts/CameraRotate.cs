@@ -3,11 +3,23 @@ using System.Collections;
 
 public class CameraRotate : MonoBehaviour {
 
-    public float verticalMouseSensitivity = 1.0f;
-    public float clampAngleX = 80.0f;
-    public float clampAngleY = 80.0f;
+    #region Serialized Variables
+
+    [SerializeField]
+    private float verticalMouseSensitivity = 1.0f;
+    [SerializeField]
+    private float clampAngleX = 80.0f;
+    [SerializeField]
+    private float clampAngleY = 80.0f;
+
+    #endregion
+
+    #region Private Variables
+
     private float rotY = 0.0f; // rotation around the up/y axis
     private float rotX = 0.0f; // rotation around the right/x axis
+
+    #endregion
 
     // Use this for initialization
     void Start()

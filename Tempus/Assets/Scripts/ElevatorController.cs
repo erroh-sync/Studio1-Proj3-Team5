@@ -6,7 +6,9 @@ public class ElevatorController : MonoBehaviour {
     #region Serialized Variables
 
     [SerializeField]
-    private GameObject[] elevatorDoors;
+    private Animation leftDoorAnimation;
+    [SerializeField]
+    private Animation rightDoorAnimation;
 
     #endregion
 
@@ -21,8 +23,8 @@ public class ElevatorController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-	
-	}
+        OpenDoors();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -31,6 +33,31 @@ public class ElevatorController : MonoBehaviour {
 
     public void OpenDoors()
     {
+        leftDoorAnimation.Play();
+        foreach (AnimationState state in leftDoorAnimation)
+        {
+            state.speed = 1.0F;
+        }
 
+        rightDoorAnimation.Play();
+        foreach (AnimationState state in rightDoorAnimation)
+        {
+            state.speed = 1.0F;
+        }
+    }
+
+    public void CloseDoors()
+    {
+        leftDoorAnimation.Play();
+        foreach (AnimationState state in leftDoorAnimation)
+        {
+            state.speed = -1.0F;
+        }
+
+        rightDoorAnimation.Play();
+        foreach (AnimationState state in rightDoorAnimation)
+        {
+            state.speed = -1.0F;
+        }
     }
 }

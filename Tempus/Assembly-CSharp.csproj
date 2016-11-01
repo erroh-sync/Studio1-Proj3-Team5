@@ -50,10 +50,8 @@
      <Compile Include="Assets\Scripts\ElevatorController.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Interactable.cs" />
-     <Compile Include="Assets\Scripts\LeftElevatorDoor.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
      <Compile Include="Assets\Scripts\ReactiveObject.cs" />
-     <Compile Include="Assets\Scripts\RightElevatorDoor.cs" />
      <None Include="Assets\Shaders\BWDiffuse.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
